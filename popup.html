@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>MySafeSites</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 300px;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: #09090b;
+      color: #fafafa;
+    }
+
+    .header {
+      padding: 1.25rem 1rem 1rem;
+      border-bottom: 1px solid hsl(240 4% 14%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .logo svg {
+      width: 20px; height: 20px;
+      color: hsl(217 91% 60%);
+    }
+
+    /* Toggle switch */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toggle-label {
+      font-size: 0.75rem;
+      color: hsl(240 5% 60%);
+    }
+
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+    }
+
+    .toggle input { display: none; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: hsl(240 4% 20%);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 3px; top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    input:checked + .slider { background: hsl(217 91% 60%); }
+    input:checked + .slider::before { transform: translateX(16px); }
+
+    /* Body */
+    .body { padding: 1rem; }
+
+    /* Status card */
+    .status-card {
+      background: hsl(240 6% 7%);
+      border: 1px solid hsl(240 4% 14%);
+      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .status-row + .status-row { margin-top: 0.5rem; }
+
+    .label { color: hsl(240 5% 55%); }
+
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .badge-on  { background: hsl(217 91% 60% / 0.15); color: hsl(217 91% 65%); }
+    .badge-off { background: hsl(240 4% 18%);          color: hsl(240 5% 55%);  }
+    .badge-green { background: hsl(152 60% 52% / 0.15); color: hsl(152 60% 55%);}
+    .badge-red   { background: hsl(0 72% 51% / 0.15);   color: hsl(0 72% 60%);  }
+
+    /* Site list */
+    .sites-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: hsl(240 5% 45%);
+      margin-bottom: 0.5rem;
+    }
+
+    .sites-list {
+      background: hsl(240 6% 7%);
+      border: 1px solid hsl(240 4% 14%);
+      border-radius: 10px;
+      overflow: hidden;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    .site-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.875rem;
+      font-size: 0.8rem;
+      font-family: monospace;
+      color: hsl(240 5% 70%);
+      border-bottom: 1px solid hsl(240 4% 12%);
+    }
+
+    .site-item:last-child { border-bottom: none; }
+
+    .dot {
+      width: 6px; height: 6px;
+      background: hsl(217 91% 60%);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .empty {
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: hsl(240 5% 40%);
+    }
+
+    /* Not logged in state */
+    .login-prompt {
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .login-prompt p {
+      font-size: 0.82rem;
+      color: hsl(240 5% 55%);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: hsl(217 91% 60%); color: #fff; }
+    .btn-secondary {
+      background: hsl(240 4% 14%);
+      color: hsl(0 0% 85%);
+      border: 1px solid hsl(240 4% 20%);
+      margin-top: 0.5rem;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid hsl(240 4% 14%);
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .footer .btn { font-size: 0.78rem; padding: 0.45rem; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: hsl(240 4% 22%); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      MySafeSites
+    </div>
+    <div class="toggle-wrap">
+      <span class="toggle-label" id="toggle-label">On</span>
+      <label class="toggle">
+        <input type="checkbox" id="enable-toggle" checked/>
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Body: shown when logged in -->
+  <div class="body" id="logged-in-view" style="display:none">
+    <div class="status-card">
+      <div class="status-row">
+        <span class="label">Status</span>
+        <span class="badge" id="status-badge">Active</span>
+      </div>
+      <div class="status-row">
+        <span class="label">Sites Blocked</span>
+        <span class="badge badge-on" id="count-badge">0</span>
+      </div>
+    </div>
+
+    <div class="sites-label">Blocked Domains</div>
+    <div class="sites-list" id="sites-list">
+      <div class="empty">Loading...</div>
+    </div>
+  </div>
+
+  <!-- Body: shown when NOT logged in -->
+  <div class="body" id="logged-out-view" style="display:none">
+    <div class="login-prompt">
+      <p>Log in to your MySafeSites account to sync and enforce your block list.</p>
+      <button class="btn btn-primary" id="login-btn">Log In to MySafeSites</button>
+      <button class="btn btn-secondary" id="sync-btn">Retry Sync</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <button class="btn btn-secondary" id="dashboard-btn">Dashboard</button>
+    <button class="btn btn-secondary" id="refresh-btn">↻ Sync Now</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

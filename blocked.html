@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Site Blocked – MySafeSites</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: #09090b;
+      color: #fafafa;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: hsl(240 6% 6%);
+      border: 1px solid hsl(240 4% 16%);
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .icon-wrap {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .icon-wrap.danger  { background: hsl(0 72% 51% / 0.12); }
+    .icon-wrap.blocked { background: hsl(217 91% 60% / 0.12); }
+
+    .icon-wrap svg { width:36px; height:36px; }
+    .icon-wrap.danger  svg { color: hsl(0 72% 60%); }
+    .icon-wrap.blocked svg { color: hsl(217 91% 60%); }
+
+    h1 { font-size:1.5rem; font-weight:700; margin-bottom:0.5rem; letter-spacing:-0.02em; }
+
+    .url-badge {
+      display: inline-block;
+      margin: 0.75rem 0;
+      padding: 0.4rem 1rem;
+      background: hsl(240 4% 16%);
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: hsl(217 91% 70%);
+      word-break: break-all;
+      max-width: 100%;
+    }
+
+    .score-section {
+      background: hsl(240 6% 8%);
+      border: 1px solid hsl(240 4% 16%);
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 1.25rem 0;
+      text-align: left;
+      display: none;
+    }
+
+    .score-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.8rem; margin-bottom: 6px;
+      color: hsl(240 5% 65%);
+    }
+
+    .score-number { font-weight: 700; color: hsl(0 72% 60%); }
+
+    .meter-bg {
+      background: hsl(240 4% 16%);
+      border-radius: 4px; height: 6px; overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%; border-radius: 4px;
+      background: linear-gradient(to right, hsl(152 60% 52%), hsl(38 92% 50%), hsl(0 72% 51%));
+      transition: width 0.6s ease;
+    }
+
+    .ai-msg {
+      font-size: 0.82rem;
+      color: hsl(0 72% 65%);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    p {
+      color: hsl(240 5% 65%);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .buttons { display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; }
+
+    button {
+      cursor:pointer; border:none; border-radius:8px;
+      padding:0.6rem 1.4rem; font-size:0.875rem; font-weight:500;
+      transition:opacity 0.2s;
+    }
+    button:hover { opacity:0.85; }
+
+    .btn-back      { background: hsl(217 91% 60%); color:#fff; }
+    .btn-secondary {
+      background: hsl(240 4% 16%); color: hsl(0 0% 98%);
+      border: 1px solid hsl(240 4% 22%);
+    }
+
+    .reason-tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .reason-tag.ai     { background: hsl(0 72% 51% / 0.15); color: hsl(0 72% 65%); }
+    .reason-tag.manual { background: hsl(217 91% 60% / 0.15); color: hsl(217 91% 70%); }
+
+    .footer { margin-top:2rem; font-size:0.72rem; color:hsl(240 5% 35%); }
+  </style>
+</head>
+<body>
+<div class="card" id="card">
+
+  <div class="icon-wrap" id="icon-wrap">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+         stroke="currentColor" stroke-width="1.8">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+  </div>
+
+  <div class="reason-tag" id="reason-tag">Blocked</div>
+  <h1 id="title">Site Blocked</h1>
+  <div class="url-badge" id="url-badge">this site</div>
+
+  <div class="score-section" id="score-section">
+    <div class="score-row">
+      <span>Danger Score</span>
+      <span class="score-number" id="score-number">0%</span>
+    </div>
+    <div class="meter-bg">
+      <div class="meter-fill" id="meter-fill" style="width:0%"></div>
+    </div>
+    <div class="ai-msg" id="ai-msg"></div>
+  </div>
+
+  <p id="desc">This website is on your MySafeSites block list. Stay focused.</p>
+
+  <div class="buttons">
+    <!-- FIX: no onclick="" inline handlers — use id + addEventListener in blocked.js -->
+    <button id="btn-back" class="btn-back">← Go Back</button>
+    <button id="btn-dashboard" class="btn-secondary">Manage Block List</button>
+  </div>
+
+  <div class="footer">Protected by MySafeSites · AI-powered URL safety</div>
+</div>
+
+<!-- FIX: no inline <script> — must be a separate .js file for Chrome CSP -->
+<script src="blocked.js"></script>
+</body>
+</html>
